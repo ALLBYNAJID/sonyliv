@@ -1,18 +1,16 @@
-// api/ts.js
-
 import fetch from 'node-fetch';
 
 export default async function handler(req, res) {
-  const base = req.query.base || '';
-  const file = req.query.file || '';
-
-  if (!base || !file) {
-    return res.status(400).send('Invalid parameters');
-  }
-
-  const url = base + file;
-
   try {
+    const base = req.query.base || '';
+    const file = req.query.file || '';
+
+    if (!base || !file) {
+      return res.status(400).send('Invalid parameters');
+    }
+
+    const url = base + file;
+
     const response = await fetch(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
@@ -29,9 +27,11 @@ export default async function handler(req, res) {
 
     res.setHeader('Content-Type', contentType);
 
-    // Stream the response body directly to client
+    // Pipe the streamed response directly to the client
     response.body.pipe(res);
+
   } catch (error) {
+    console.error('Error in api/ts:', error);
     res.status(500).send('Server error: ' + error.message);
   }
-}
+        }
